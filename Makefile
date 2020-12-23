@@ -2,6 +2,8 @@ VERSION=2.44.1
 
 DIR=graphviz-$(VERSION)
 
+PREFIX = $(abspath ./prefix)
+
 deps:
 	brew install emscripten automake ghostscript
 
@@ -16,7 +18,7 @@ setup:
 	sed -i -e '/-headerpad_max_install_names/d' $(DIR)/configure.ac
 	cd $(DIR); autoreconf -f -i;
 
-	# use C code as part of a build **big brain**
+	# use C code as part of a build process **big brain**
 	cd $(DIR)/lib/gvpr; cc mkdefs.c -o mkdefs
 
 	cd $(DIR); emconfigure ./configure --quiet \
@@ -34,10 +36,15 @@ setup:
 		--disable-tcl \
 		--enable-static \
 		--disable-shared \
-		--prefix=prefix \
-		--libdir=prefix/lib \
+		--prefix=$(PREFIX) \
+		--libdir=$(PREFIX)/lib \
 		CFLAGS="-Oz -w";
-	cd $(DIR); emmake make lib plugin;
+
+	cd $(DIR)/lib; emmake make;
+	cd $(DIR)/plugin; emmake make;
+
+	cd $(DIR)/lib; emmake make install;
+	cd $(DIR)/plugin; emmake make install;
 
 build:
 	emcc -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
