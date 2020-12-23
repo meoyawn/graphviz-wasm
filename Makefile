@@ -1,18 +1,25 @@
+VERSION=2.44.1
+
+DIR=graphviz-$(VERSION)
+
+deps:
+	brew install emscripten automake
+
 setup:
-	# DOWNLOAD
-	# CONFIGURE
+	rm -rf $(DIR)
+	curl https://gitlab.com/graphviz/graphviz/-/archive/$(VERSION)/graphviz-$(VERSION).tar.gz | tar -xz
+	cd $(DIR); ./autogen.sh; emconfigure ./configure;
 	# FEATURE files
 
 build:
 	emcc -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
-		-I graphviz \
-		-I graphviz/lib/common \
-		-I graphviz/lib/gvc \
-		-I graphviz/lib/pathplan \
-		-I graphviz/lib/cgraph \
-		-I graphviz/lib/cdt \
-		-I graphviz/lib/sfio \
-		-I graphviz/lib/ast \
-		-I hacks \
+		-I $(DIR) \
+		-I $(DIR)/lib/common \
+		-I $(DIR)/lib/gvc \
+		-I $(DIR)/lib/pathplan \
+		-I $(DIR)/lib/cgraph \
+		-I $(DIR)/lib/cdt \
+		-I $(DIR)/lib/sfio \
+		-I $(DIR)/lib/ast \
     main.c \
-    graphviz/lib/**/*.c
+    $(DIR)/lib/**/*.c
