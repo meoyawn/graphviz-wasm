@@ -3,7 +3,7 @@ VERSION=2.44.1
 DIR=graphviz-$(VERSION)
 
 deps:
-	brew install emscripten automake ghostscript
+	brew install emscripten ghostscript
 
 # https://graphviz.org/download/source/
 # https://emscripten.org/docs/compiling/Building-Projects.html
