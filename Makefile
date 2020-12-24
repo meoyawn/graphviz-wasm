@@ -47,14 +47,10 @@ setup:
 	cd $(DIR)/plugin; emmake make install;
 
 build:
-	emcc -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
-		-I $(DIR) \
-		-I $(DIR)/lib/common \
-		-I $(DIR)/lib/gvc \
-		-I $(DIR)/lib/pathplan \
-		-I $(DIR)/lib/cgraph \
-		-I $(DIR)/lib/cdt \
-		-I $(DIR)/lib/sfio \
-		-I $(DIR)/lib/ast \
-		main.c \
-		$(DIR)/lib/**/*.c
+	emcc -Oz --closure 1 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' -s FILESYSTEM=0 -s ENVIRONMENT=web \
+		-I $(PREFIX)/include/graphviz \
+		-L $(PREFIX)/lib \
+		-L $(PREFIX)/lib/graphviz \
+		-lgvplugin_core -lgvplugin_dot_layout -lgvplugin_neato_layout -lcgraph -lgvc -lgvpr -lpathplan -lxdot -lcdt \
+		main.cpp \
+		-o graphviz.js
