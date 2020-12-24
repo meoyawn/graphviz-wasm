@@ -18,7 +18,7 @@ int appendErr(char *buf)
 }
 
 EMSCRIPTEN_KEEPALIVE
-std::string vizLastErrorMessage()
+std::string lastErr()
 {
   if (agreseterrors() == 0)
     return "";
