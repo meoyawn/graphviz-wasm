@@ -10,16 +10,12 @@ deps:
 # https://graphviz.org/download/source/
 # https://emscripten.org/docs/compiling/Building-Projects.html
 setup:
-	rm -rf $(DIR)
-	curl https://www2.graphviz.org/Packages/stable/portable_source/graphviz-$(VERSION).tar.gz | tar -xz
+	if [! -d $(DIR) ]; then curl https://www2.graphviz.org/Packages/stable/portable_source/graphviz-$(VERSION).tar.gz | tar -xz; fi
 
 	# MACOS:
 	# https://github.com/emscripten-core/emscripten/issues/10896
 	sed -i -e '/-headerpad_max_install_names/d' $(DIR)/configure.ac
 	cd $(DIR); autoreconf -f -i;
-
-	# use C code as part of a build process **big brain**
-	cd $(DIR)/lib/gvpr; cc mkdefs.c -o mkdefs
 
 	cd $(DIR); emconfigure ./configure --quiet \
 		--without-sfdp \
@@ -32,6 +28,7 @@ setup:
 		--without-digcola \
 		--without-ipsepcola \
 		--without-rsvg \
+		--without-libgd \
 		--disable-ltdl \
 		--disable-tcl \
 		--enable-static \
@@ -40,8 +37,13 @@ setup:
 		--libdir=$(PREFIX)/lib \
 		CFLAGS="-Oz -w";
 
+	# use C code as part of a build process **big brain**
+	cd $(DIR)/lib/gvpr; cc mkdefs.c -o mkdefs
+
 	cd $(DIR)/lib; emmake make;
 	cd $(DIR)/plugin; emmake make;
+
+	rm -rf $(PREFIX)
 
 	cd $(DIR)/lib; emmake make install;
 	cd $(DIR)/plugin; emmake make install;
