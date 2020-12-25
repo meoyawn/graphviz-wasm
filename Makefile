@@ -1,4 +1,4 @@
-VERSION=2.44.1
+VERSION=2.40.1
 
 DIR=graphviz-$(VERSION)
 
@@ -10,7 +10,8 @@ deps:
 # https://graphviz.org/download/source/
 # https://emscripten.org/docs/compiling/Building-Projects.html
 setup:
-	if [! -d $(DIR) ]; then curl https://www2.graphviz.org/Packages/stable/portable_source/graphviz-$(VERSION).tar.gz | tar -xz; fi
+	rm -rf $(DIR)
+	curl http://graphviz.gitlab.io/pub/graphviz/stable/SOURCES/graphviz.tar.gz | tar -xz
 
 	# MACOS:
 	# https://github.com/emscripten-core/emscripten/issues/10896
